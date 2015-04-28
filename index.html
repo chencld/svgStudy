@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Red dot</title> 
+</style>
+</head>
+<body>
+    <script src="raphael-min.js"></script>
+	<script type="text/javascript">
+
+       var paper = Raphael(0,0,1000,1000);
+       paper.customAttributes.progress = function (v) { 
+            var path = this.data("mypath"),
+                attrs = this.attr(), 
+                offset={x:0,y:0};
+        if (!path) { return {
+                        transform: "t0,0"
+                    };
+        }
+        if (attrs.hasOwnProperty("width")) { 
+            offset.x = -this.attr("width") / 2; 
+            offset.y = -this.attr("height") / 2;
+        }
+        var len = path.getTotalLength();
+        var point = path.getPointAtLength(v * len); 
+        return {
+        transform: "t" + (point.x + offset.x) + "," + (point.y + offset.y) + "r" + point.alpha
+        }; };
+       var sride = paper.path("M100,200 a100,100 0 0,1 200,0") .attr({
+            "stroke-width": 1, 
+            "stroke": "red", 
+            "stroke-dasharray": "."
+        });
+       var line = paper.path("M90,200 L310,200").attr({
+            "stroke-width": 2, 
+            "stroke": "red",
+       })
+       var start = paper.text(80, 220, "6:00");
+       var end = paper.text(290, 220, "18:00");
+       paper.set().push(start,end).attr(
+            {
+                "text-anchor": "start", 
+                "font-size": 18, //in pixels 
+                "font-family": "Courier New"
+            });
+            var nowTime = new Date(),
+               nowHour = nowTime.getHours();
+            if(nowHour>=6 && nowHour <=18){
+                var degree = Math.PI*(18-nowHour)/12;
+                var  cx = Math.cos(degree)*100+100,
+                     cy = Math.sin(degree)*100;
+                var sride2 = paper.path('"M100,200 a100,100 0 0,1 '+cx+',-'+cy+'"') .attr({
+                        "stroke-width": 1, 
+                        "stroke": "red", 
+                        "stroke-dasharray": "."
+                });
+                var sunshine = paper.image("sun.png",0,0, 26, 26);
+                    sunshine.data("mypath", sride2);
+                    sunshine.attr("progress", 0);
+                    sunshine.animate({ progress: 1 }, 1000,function(){
+                        var sride3 = paper.path('"M100,200 a100,100 0 0,1 '+cx+',-'+cy+'v'+cy+'"') .attr({"stroke": "white"}).toBack();;
+                        sride3.attr({
+                            fill : "#eee"
+                        })
+                    });
+           }
+    var dots = [{
+            "x" : 350,
+            "y" : 50
+          },
+          {
+            "x" : 400,
+            "y" : 150
+          },
+          {
+            "x" : 450,
+            "y" : 200
+          },
+          {
+            "x" : 500,
+            "y" : 300
+          },
+          {
+            "x" : 550,
+            "y" : 200
+          },
+          {
+            "x" : 600,
+            "y" : 250
+          },
+          {
+            "x" : 650,
+            "y" : 300
+          },
+          {
+            "x" : 700,
+            "y" : 350
+          },
+          {
+            "x" : 750,
+            "y" : 100
+          },
+          {
+            "x" : 800,
+            "y" : 300
+          }
+    ]
+
+    var sdots = paper.set();
+    var c = 0,
+        text = null;
+    function drawDot(){
+           var dot = paper.circle(dots[c].x,dots[c].y,3).attr("fill","red").mouseover(function(e){
+              this.animate(Raphael.animation({"r":6},300));
+              var tx = this.attr("cx"),
+                  ty = this.attr("cy");
+              text = paper.text(tx, ty-20, '100');
+           }).mouseout(function(e){
+              this.animate(Raphael.animation({"r":3},300));
+              text.remove();
+           });
+           //sdots.push(dot);
+           if(dots[c+1]){
+             var line = paper.path('"M'+dots[c].x+','+dots[c].y+'L'+dots[c+1].x+','+dots[c+1].y+'"');
+           }
+           c++;
+           if(c>9) return;
+           else{
+              setTimeout(drawDot, 300);
+           }
+       //sdots.push(dot,line);
+    }
+    /*sdots.attr({
+      "fill" : "red"
+    })*/
+    drawDot();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
